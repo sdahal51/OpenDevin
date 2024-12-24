@@ -39,8 +39,7 @@ class LocalBox(Sandbox):
         try:
             completed_process = subprocess.run(
                 cmd,
-                shell=True,
-                text=True,
+                shell=False, text=True,
                 capture_output=True,
                 timeout=self.timeout,
                 cwd=config.get(ConfigType.WORKSPACE_BASE),
@@ -90,8 +89,7 @@ class LocalBox(Sandbox):
     def execute_in_background(self, cmd: str) -> Process:
         process = subprocess.Popen(
             cmd,
-            shell=True,
-            stdout=subprocess.PIPE,
+            shell=False, stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
             cwd=config.get(ConfigType.WORKSPACE_BASE),
