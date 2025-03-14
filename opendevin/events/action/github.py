@@ -135,7 +135,7 @@ class GitHubSendPRAction(Action):
         data = {k: v for k, v in data.items() if v is not None}
 
         # Make the request
-        response = requests.post(url, headers=headers, json=data)
+        response = requests.post(url, headers=headers, json=data, timeout=60)
 
         # Check for errors
         if response.status_code == 201:
