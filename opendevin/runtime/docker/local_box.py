@@ -9,6 +9,7 @@ from opendevin.core.logger import opendevin_logger as logger
 from opendevin.core.schema.config import ConfigType
 from opendevin.runtime.docker.process import DockerProcess, Process
 from opendevin.runtime.sandbox import Sandbox
+from security import safe_command
 
 # ===============================================================================
 #  ** WARNING **
@@ -37,8 +38,7 @@ class LocalBox(Sandbox):
 
     def execute(self, cmd: str) -> Tuple[int, str]:
         try:
-            completed_process = subprocess.run(
-                cmd,
+            completed_process = safe_command.run(subprocess.run, cmd,
                 shell=True,
                 text=True,
                 capture_output=True,
@@ -52,8 +52,7 @@ class LocalBox(Sandbox):
 
     def copy_to(self, host_src: str, sandbox_dest: str, recursive: bool = False):
         # mkdir -p sandbox_dest if it doesn't exist
-        res = subprocess.run(
-            f'mkdir -p {sandbox_dest}',
+        res = safe_command.run(subprocess.run, f'mkdir -p {sandbox_dest}',
             shell=True,
             text=True,
             cwd=config.get(ConfigType.WORKSPACE_BASE),
@@ -63,8 +62,7 @@ class LocalBox(Sandbox):
             raise RuntimeError(f'Failed to create directory {sandbox_dest} in sandbox')
 
         if recursive:
-            res = subprocess.run(
-                f'cp -r {host_src} {sandbox_dest}',
+            res = safe_command.run(subprocess.run, f'cp -r {host_src} {sandbox_dest}',
                 shell=True,
                 text=True,
                 cwd=config.get(ConfigType.WORKSPACE_BASE),
@@ -75,8 +73,7 @@ class LocalBox(Sandbox):
                     f'Failed to copy {host_src} to {sandbox_dest} in sandbox'
                 )
         else:
-            res = subprocess.run(
-                f'cp {host_src} {sandbox_dest}',
+            res = safe_command.run(subprocess.run, f'cp {host_src} {sandbox_dest}',
                 shell=True,
                 text=True,
                 cwd=config.get(ConfigType.WORKSPACE_BASE),
@@ -88,8 +85,7 @@ class LocalBox(Sandbox):
                 )
 
     def execute_in_background(self, cmd: str) -> Process:
-        process = subprocess.Popen(
-            cmd,
+        process = safe_command.run(subprocess.Popen, cmd,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
