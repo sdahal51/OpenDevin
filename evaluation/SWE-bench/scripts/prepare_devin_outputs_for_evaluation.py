@@ -14,9 +14,8 @@ Outputs:
 import json
 import os
 import sys
-
-import requests
 from tqdm import tqdm
+from security import safe_requests
 
 
 def get_devin_eval_output(setting):
@@ -31,13 +30,13 @@ def get_devin_eval_output(setting):
     failed_files_info = []
 
     def get_files(api_url, subfolder_name, files_info):
-        response = requests.get(api_url)
+        response = safe_requests.get(api_url)
         if response.status_code == 200:
             contents = response.json()
             for item in tqdm(contents):
                 if item['type'] == 'file':
                     file_url = f"https://raw.githubusercontent.com/{repo_url}/main/{folder_path}/{subfolder_name}/{item['name']}"
-                    file_content = requests.get(file_url).text
+                    file_content = safe_requests.get(file_url).text
                     instance_id = item['name'][:-9]
                     model_name = 'Devin'  # Update with actual model name
                     files_info.append({
