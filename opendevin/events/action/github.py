@@ -1,4 +1,3 @@
-import random
 import string
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
@@ -16,6 +15,7 @@ from opendevin.events.observation import (
 )
 
 from .action import Action
+import secrets
 
 if TYPE_CHECKING:
     from opendevin.controller import AgentController
@@ -48,7 +48,7 @@ class GitHubPushAction(Action):
 
         # Create a random short string to use as a temporary remote
         random_remote = ''.join(
-            ['opendevin_temp_'] + random.choices(string.ascii_lowercase, k=5)
+            ['opendevin_temp_'] + secrets.SystemRandom().choices(string.ascii_lowercase, k=5)
         )
 
         # Set the temporary remote
